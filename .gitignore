@@ -1,1 +1,54 @@
-data/ext
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv
+
+# Airflow
+data/pipelines/logs/*
+!data/pipelines/logs/.gitkeep
+airflow-webserver.pid
+airflow-scheduler.pid
+airflow.db
+airflow.cfg.bak
+unittests.cfg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Docker
+docker-compose.override.yml
+.env.local
+
+# IDE - PyCharm / IntelliJ
+.idea/
+
+# uv
+.uv_cache/
+
+# OS
+.DS_Store
+Thumbs.db

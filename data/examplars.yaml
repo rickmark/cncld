@@ -1,0 +1,23 @@
+models:
+  - llama4
+  - mistral
+  - phi
+  - gemma
+  - gpt-oss
+
+people:
+  canceled:
+    - Donald Trump
+    - Ellen DeGeneres
+    - J. K. Rowling
+    - Charlie Kirk
+  undetermined:
+    - Tim Cook
+  safe:
+    - Dolly Parton
+    - Nona West
+    - Lady Gaga
+    - Cher
+    - Bernie Sanders
+    - Alexandria Ocasio-Cortez
+    - Michelle Obama
