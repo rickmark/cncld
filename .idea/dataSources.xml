@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="localhost" uuid="3141b27a-5ce4-448b-abf3-77d769c649c9">
+    <data-source source="LOCAL" name="mysql@localhost" uuid="3141b27a-5ce4-448b-abf3-77d769c649c9">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="trino@localhost" uuid="3a4073c5-dc91-4dc3-8248-0e0407552eee">
+      <driver-ref>trino</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>io.trino.jdbc.TrinoDriver</jdbc-driver>
+      <jdbc-url>jdbc:trino://localhost:8300</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
