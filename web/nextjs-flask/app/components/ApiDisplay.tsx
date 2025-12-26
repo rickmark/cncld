@@ -64,23 +64,34 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
 
   return (
     <div>
-      <h2>Search Results:</h2>
       {data.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mx-4">
           {data.map((doc, index) => (
-            <div key={doc.page_id || index} className="border border-gray-300 rounded-lg p-4 shadow-md">
-              <h3 className="text-lg font-bold mb-2">{doc.title || 'Unknown'}</h3>
-              <p className="mb-1"><strong>Cancelled:</strong> {doc.cancled ? 'Yes' : 'No'}</p>
-              <p className="mb-1"><strong>Rationale:</strong> {doc.rationale || 'N/A'}</p>
-              <p className="mb-1"><strong>Revokable:</strong> {doc.revokable ? 'Yes' : 'No'}</p>
-              {doc.revokable && doc.penance && (
-                <p className="mb-1"><strong>Penance:</strong> {doc.penance}</p>
-              )}
+            <div key={doc.page_id || index} className={`border-2 rounded-lg shadow-md ${doc.cancled ? 'border-red-500' : 'border-green-600'}`}>
+              <div className={`p-4 rounded-t-sm ${doc.cancled ? 'bg-red-500 text-white' : 'bg-green-600 text-white'}`}>
+                <h3 className="text-3xl font-bold">{doc.title || 'Unknown'}</h3>
+              </div>
+              <div className="bg-black text-white p-4 rounded-b-lg">
+                <div className="flex flex-col">
+                  <p className="text-2xl font-bold text-center">{doc.cancled ? 'Cancelled' : 'Not Cancelled'}</p>
+                  <br />
+                  <p className="mb-1 text-left">{doc.rationale || 'N/A'}</p>
+                  {doc.revokable && doc.penance && (
+                    <div>
+                      <hr className="my-2" />
+                      <p className="mb-1 text-left"><strong>Path to Redemption:</strong> {doc.penance}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
       ) : (
-        <p>No results found.</p>
+        <div>
+          <p className="text-xl">No results found</p>
+          <p className="mx-4">Enter the name of a celebrity to check their cancled status.</p>
+        </div>
       )}
     </div>
   )

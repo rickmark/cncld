@@ -15,11 +15,10 @@ export default function Home() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-transparent border-0 border-b-2 border-white text-white placeholder-white text-3xl font-bold text-center w-48 focus:outline-none focus:border-blue-500"
+            className="bg-transparent border-0 border-b-2 border-white text-white placeholder-white text-3xl font-bold text-center w-48 focus:outline-none"
           />{' '}
           cncld?
         </h1>
-        <p className="mb-2">Search a celebrity or company:</p>
         <ApiDisplay term={searchTerm} />
       </div>
     </main>
