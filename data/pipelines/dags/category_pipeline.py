@@ -2,7 +2,6 @@ from datetime import datetime
 from airflow import Asset
 from airflow.sdk import DAG
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.providers.standard.sensors.external_task import ExternalTaskSensor
 from airflow.sdk.definitions.param import ParamsDict, Param
 
 default_args = {"owner": "rickmark"}
@@ -94,5 +93,4 @@ with DAG(
         """,
     )
 
-    drop_person_candidates >> person_categories >> top_n_people
-    delete_people >> person_categories
+    [drop_person_candidates, delete_people] >> person_categories >> top_n_people
