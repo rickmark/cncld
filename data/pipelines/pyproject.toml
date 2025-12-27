@@ -4,4 +4,17 @@ version = "0.1.0"
 description = "GenAI Based Approach for Ecosystem Toxixity"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "apache-airflow>=3.1.5",
+    "apache-airflow-providers-amazon>=9.18.1",
+    "apache-airflow-providers-apache-hdfs>=4.11.1",
+    "apache-airflow-providers-mysql>=6.4.0",
+    "apache-airflow-providers-openai>=1.7.1",
+    "apache-airflow-providers-trino>=6.4.1",
+    "flask-appbuilder>=5.0.2",
+    "graphviz>=0.21",
+    "ipykernel>=7.1.0",
+    "minio>=7.2.20",
+    "mysqlclient>=2.2.7",
+    "pandas>=2.3.3",
+]

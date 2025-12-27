@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/cncld.iml" filepath="$PROJECT_DIR$/.idea/cncld.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data/pipelines/pipelines.iml" filepath="$PROJECT_DIR$/data/pipelines/pipelines.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/untitled/web.iml" filepath="$PROJECT_DIR$/web/untitled/web.iml" />
     </modules>
   </component>
 </project>
