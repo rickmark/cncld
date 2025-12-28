@@ -10,8 +10,7 @@ with DAG(
     dag_id="category_pipeline",
     default_args=default_args,
     description="Extract target entities from categories",
-    schedule="@daily",  # Override to match your needs
-    start_date=datetime(2022, 1, 1),
+    schedule="@daily",
     catchup=False,
     tags={"trino", "wikipedia"},
     params=ParamsDict({
@@ -31,27 +30,20 @@ with DAG(
 ) as dag:
 
 
-    delete_people = SQLExecuteQueryOperator(
+    drop_target_entities = SQLExecuteQueryOperator(
         task_id="delete_people",
         conn_id="trino_default",
         do_xcom_push=True,
-        sql="DELETE FROM mysql.wikipedia.target_entities WHERE entity_type = {{params['entity_type']}}",
-    )
-
-    drop_person_candidates = SQLExecuteQueryOperator(
-        task_id="drop_person_candidates",
-        conn_id="trino_default",
-        do_xcom_push=True,
-        sql="DROP TABLE IF EXISTS mysql.wikipedia.person_candidates"
+        sql="DROP TABLE IF EXISTS mysql.wikipedia.target_entities",
     )
 
     person_categories = SQLExecuteQueryOperator(
-        task_id="person_categories",
+        task_id="target_entities",
         conn_id="trino_default",
         do_xcom_push=True,
-        outlets=[Asset("trino://localhost:8300/mysql/wikipedia/person_candidates")],
+        outlets=[Asset("trino://localhost:8300/mysql/wikipedia/target_entities")],
         sql="""
-            CREATE TABLE mysql.wikipedia.person_candidates AS
+            CREATE TABLE mysql.wikipedia.target_entities AS
             WITH cat_list AS (
                 WITH RECURSIVE category_tree (cl_from, cl_target_id) AS (
                     SELECT c.cl_from, c.cl_target_id
@@ -78,19 +70,7 @@ with DAG(
         """,
     )
 
-    top_n_people = SQLExecuteQueryOperator(
-        task_id="top_n_people",
-        conn_id="trino_default",
-        outlets=[Asset("trino://localhost:8300/mysql/wikipedia/target_entities")],
-        do_xcom_push=True,
-        sql=f"""
-            INSERT INTO mysql.wikipedia.target_entities (page_id, entity_type)
-            SELECT page_id, {{params['entity_type']}} 
-            FROM mysql.wikipedia.person_candidates 
-            INNER JOIN mysql.wikipedia.page USING (page_id)
-            ORDER BY page_id 
-            LIMIT {{params['top_n']}}
-        """,
-    )
+    drop_target_entities >> person_categories
 
-    [drop_person_candidates, delete_people] >> person_categories >> top_n_people
+if __name__ == "__main__":
+    dag.test()
