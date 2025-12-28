@@ -15,11 +15,11 @@ with DAG(
 ) as dag:
 
 
-    drop_pagview_rollup = SQLExecuteQueryOperator(
-        task_id="drop_pagview_rollup",
+    drop_pageview_rollup = SQLExecuteQueryOperator(
+        task_id="drop_pageview_rollup",
         conn_id="trino_default",
         do_xcom_push=True,
-        sql="DROP TABLE IF EXISTS mysql.wikipedia.pagview_rollup",
+        sql="DROP TABLE IF EXISTS mysql.wikipedia.pageview_rollup",
     )
 
     pageview_rollup = SQLExecuteQueryOperator(
@@ -28,7 +28,7 @@ with DAG(
         do_xcom_push=True,
         outlets=[Asset("trino://localhost:8300/mysql/wikipedia/pageview_rollup")],
         sql="""
-            CREATE TABLE mysql.wikipedia.pagview_rollup AS
+            CREATE TABLE mysql.wikipedia.pageview_rollup AS
             WITH pageview_rollup AS (SELECT page_id, SUM(view_count) AS view_count
                                      FROM mysql.wikipedia.pageviews_raw AS pr
                                      GROUP BY page_id)
@@ -42,7 +42,7 @@ with DAG(
     )
 
 
-    drop_pagview_rollup << pageview_rollup
+    drop_pageview_rollup >> pageview_rollup
 
 if __name__ == "__main__":
     dag.test()

@@ -15,11 +15,11 @@ with DAG(
     schedule="@daily",
 ) as dag:
     @task.branch(task_id="check_s3_file")
-    def check_s3_file(key):
-        hook = S3Hook(aws_conn_id='storage_default')
-        if hook.check_for_key(key, bucket_name='wikipedia'):
-            return False  # File exists, signal to skip
-        return True  # File doesn't exist, proceed
+    def check_s3_file(dest_key, task_key):
+        hook = S3Hook(aws_conn_id='local_storage')
+        if hook.check_for_key(dest_key, bucket_name='wikipedia'):
+            return task_key
+        return None
 
     for file in glob.glob(os.path.expanduser("~/Downloads/wikipedia/*")):
         path_obj = Path(file)
@@ -51,18 +51,21 @@ with DAG(
         split_url = f"s3://wikipedia/pageviews/{base}"
         logging.info(f"Uploading PageViews: {split_url}")
         dest_key = f'pageviews/{base}'
+        task_key = base.replace('-', '_')
+        task_id = f'upload_pageview_{task_key}_to_s3'
 
 
-        if not check_s3_file(dest_key):
-            upload_operator = LocalFilesystemToS3Operator(
-                task_id=f'upload_pageview_{base}_to_s3',
-                filename=file, # Full path to the file on the Airflow worker
-                dest_key=dest_key, # The key (path/name) in S3
-                dest_bucket='wikipedia',
-                #outlets=[Asset(split_url)],
-                aws_conn_id='local_storage', # Refers to the connection ID created earlier
-                replace=False, # Overwrite if the key already exists
-            )
+        check_operator = check_s3_file.override(task_id=f"check_s3_file_{task_key}")(dest_key, task_id)
+        upload_operator = LocalFilesystemToS3Operator(
+            task_id=task_id,
+            filename=file, # Full path to the file on the Airflow worker
+            dest_key=dest_key, # The key (path/name) in S3
+            dest_bucket='wikipedia',
+            #outlets=[Asset(split_url)],
+            aws_conn_id='local_storage', # Refers to the connection ID created earlier
+            replace=False, # Overwrite if the key already exists
+        )
+        check_operator >> upload_operator
 
 if __name__ == "__main__":
     dag.test()

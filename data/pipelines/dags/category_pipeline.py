@@ -15,7 +15,7 @@ with DAG(
     tags={"trino", "wikipedia"},
     params=ParamsDict({
             "person_category": Param(
-        236283,
+        173,
                 type="integer",
             ),
             "top_n": Param(
@@ -43,30 +43,20 @@ with DAG(
         do_xcom_push=True,
         outlets=[Asset("trino://localhost:8300/mysql/wikipedia/target_entities")],
         sql="""
-            CREATE TABLE mysql.wikipedia.target_entities AS
-            WITH cat_list AS (
-                WITH RECURSIVE category_tree (cl_from, cl_target_id) AS (
-                    SELECT c.cl_from, c.cl_target_id
-                    FROM mysql.wikipedia.categorylinks AS c
-                    WHERE cl_from = {{params['person_category']}} -- Category "People"
-            
-                    UNION ALL
-                    SELECT c.cl_from, c.cl_target_id
-                    FROM mysql.wikipedia.categorylinks AS c
-                    INNER JOIN category_tree AS t
-                        ON t.cl_target_id = c.cl_from
-                        AND c.cl_type = 'subcat'
-                )
-                SELECT {{params['person_category']}} AS cat_id
-                UNION ALL
-                SELECT ct.cl_target_id AS cat_id
-                FROM category_tree AS ct
-            )
-            SELECT DISTINCT cl_from AS page_id, 1 AS entity_type
-            FROM mysql.wikipedia.categorylinks AS c
-            WHERE cl_target_id IN (SELECT cat_id FROM cat_list)
+            CREATE TABLE IF NOT EXISTS mysql.wikipedia.target_entities AS
+            SELECT p.page_id, pr.view_count, 1 AS entity_type
+            FROM mysql.wikipedia.categorylinks AS cl
+            INNER JOIN mysql.wikipedia.linktarget AS lt
+                ON lt.lt_id = cl.cl_target_id
                 AND cl_type = 'page'
-                AND cl_from IN (SELECT page_id FROM mysql.wikipedia.page)
+            INNER JOIN mysql.wikipedia.page AS p
+                ON p.page_id = cl.cl_from
+                AND p.page_namespace = 0
+            INNER JOIN mysql.wikipedia.pageview_rollup AS pr
+                ON pr.page_id = p.page_id
+            WHERE from_utf8(lt_title) = 'Living_people'
+            ORDER BY pr.view_count DESC
+            LIMIT 1000
         """,
     )
 

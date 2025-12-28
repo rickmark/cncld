@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/data/pipelines/pipelines.iml" filepath="$PROJECT_DIR$/data/pipelines/pipelines.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data/pipelines/.idea/pipelines.iml" filepath="$PROJECT_DIR$/data/pipelines/.idea/pipelines.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/.idea/web.iml" filepath="$PROJECT_DIR$/web/.idea/web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/data/workspace/.idea/workspace.iml" filepath="$PROJECT_DIR$/data/workspace/.idea/workspace.iml" />
     </modules>
   </component>
 </project>

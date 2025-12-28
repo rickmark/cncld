@@ -17,8 +17,10 @@ dependencies = [
     "graphviz>=0.21",
     "ipykernel>=7.1.0",
     "minio>=7.2.20",
+    "mwxml>=0.3.6",
     "mysqlclient>=2.2.7",
     "pandas==2.2.3",
     "pandas-stubs~=2.2.3",
+    "pqdm>=0.2.0",
     "pyarrow==21.0.0",
 ]
