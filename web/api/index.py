@@ -33,29 +33,27 @@ class Item(Base):
     canceled: Mapped[bool] = mapped_column(types.Boolean)
     rationale: Mapped[str] = mapped_column(types.String)
     penance: Mapped[Optional[str]] = mapped_column(types.String, nullable=True)
+    dimension: Mapped[str] = mapped_column(types.String)
 
 
-@app.route("/api/list")
-@app.route("/api/list/<string:item>")
-def list_endpoint(item=None):
+@app.route("/api/list/<string:dims>/<string:item>")
+def list_endpoint(dims, item):
     app.logger.info(f"Getting List for Search: {item}")
-    if item:
-        stmt = db.select(Item).where(Item.title.ilike(f"%{item}%"))
-        items = list(db.session.execute(stmt).scalars())
+    stmt = db.select(Item).where(Item.title.ilike(f"{item}%"))
+    items = list(db.session.execute(stmt).scalars())
 
-        results = []
-        for row in items:
-            app.logger.info(row)
-            row_hash = {key: value for key, value in row.__dict__.items() if '_' not in key}
+    results = []
+    for row in items:
+        app.logger.info(row)
+        row_hash = {key: value for key, value in row.__dict__.items() if '_' not in key}
 
-            results.append(row_hash)
-        app.logger.info(f"Found {len(results)} Items")
+        results.append(row_hash)
+    app.logger.info(f"Found {len(results)} Items")
 
-        response = jsonify({"results": results})
-        app.logger.info(f"Response: {response.data}")
-        return response
-    else:
-        return jsonify({"results": []})
+    response = jsonify({"results": results})
+    app.logger.info(f"Response: {response.data}")
+    return response
+
 
 
 
