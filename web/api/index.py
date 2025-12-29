@@ -1,5 +1,5 @@
+import os
 import uuid
-
 from dataclasses import dataclass
 from typing import Optional
 
@@ -7,11 +7,14 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, text
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+
+
 class Base(DeclarativeBase):
   pass
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] ="postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL',
+                                                       "postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld")
 db = SQLAlchemy(app, model_class=Base)
 
 
