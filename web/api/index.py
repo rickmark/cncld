@@ -6,7 +6,7 @@ from typing import Optional
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, text
-from sqlalchemy.orm import Mapped, mapped_column, declarative_base, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 class Base(DeclarativeBase):
   pass
 
@@ -37,7 +37,7 @@ class Item(Base):
 def list_endpoint(item=None):
     app.logger.info(f"Getting List for Search: {item}")
     if item:
-        stmt = db.select(Item).where(Item.title.like(f"%{item}%"))
+        stmt = db.select(Item).where(Item.title.ilike(f"%{item}%"))
         items = list(db.session.execute(stmt).scalars())
 
         results = []
