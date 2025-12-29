@@ -56,7 +56,7 @@ with DAG(
                 ON pr.page_id = p.page_id
             WHERE from_utf8(lt_title) = 'Living_people'
             ORDER BY pr.view_count DESC
-            LIMIT 1000
+            LIMIT 10000
         """,
     )
 
