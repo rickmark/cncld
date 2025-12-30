@@ -67,13 +67,13 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
       {data.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mx-4">
           {data.map((doc, index) => (
-            <div key={doc.page_id || index} className={`border-2 rounded-lg shadow-md ${doc.canceled == true ? 'border-red-500' : 'border-green-600'}`}>
-              <div className={`p-4 rounded-t-sm ${doc.canceled == true ? 'bg-red-500 text-white' : 'bg-green-600 text-white'}`}>
+            <div key={doc.page_id || index} className={`border-2 rounded-lg shadow-md ${doc.canceled == true ? 'border-red-500' :  (doc.penance != null ? 'border-yellow-400' :'border-green-600')}`}>
+              <div className={`p-4 rounded-t-sm text-white ${doc.canceled == true ? 'bg-red-500' : (doc.penance != null ?  'bg-yellow-400': 'bg-green-600')}`}>
                 <h3 className="text-3xl font-bold">{doc.title || 'Unknown'}</h3>
               </div>
               <div className="bg-black text-white p-4 rounded-b-lg">
                 <div className="flex flex-col">
-                  <p className="text-2xl font-bold text-center">{doc.canceled ? 'Cancelled' : 'Not Cancelled'}</p>
+                  <p className="text-2xl font-bold text-center">{doc.canceled == true ? 'Cancelled' :  (doc.penance != null ? 'Do Better...' : 'Slay Queen!')}</p>
                   <br />
                   <p className="mb-1 text-left">{doc.rationale || 'N/A'}</p>
                   {doc.revokable && doc.penance && (
