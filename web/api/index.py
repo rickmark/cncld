@@ -5,7 +5,7 @@ from typing import Optional
 
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import types, text
+from sqlalchemy import types, text, func
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 
 
@@ -36,7 +36,7 @@ class Item(Base):
     dimension: Mapped[str] = mapped_column(types.String)
 
 
-@app.route("/api/list/<string:dims>/<string:item>")
+@app.route("/api/<string:dims>/list/<string:item>")
 def list_endpoint(dims, item):
     app.logger.info(f"Getting List for Search: {item}")
     stmt = db.select(Item).where(Item.title.ilike(f"{item}%"))
@@ -55,6 +55,12 @@ def list_endpoint(dims, item):
     return response
 
 
+@app.route("/api/<string:dims>/random/cancel")
+def random_endpoint(dims):
+    stmt = db.select(Item).where(Item.canceled == True and Item.dimension == dims).order_by(func.random())
+    item = db.session.execute(stmt).scalar()
+
+    return jsonify({"result": {key: value for key, value in item.__dict__.items() if '_' not in key}})
 
 
 if __name__ == "__main__":

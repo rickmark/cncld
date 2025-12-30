@@ -17,13 +17,9 @@ import pydantic
 import math
 import dataclasses
 import uuid
-import random
-import pandas as pd
-import wikipediaapi
 from sqlalchemy.orm import Mapped, mapped_column, declarative_base
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import String, Integer, Float, Boolean, UUID, create_engine
-import time
+from sqlalchemy import String, Float, Boolean, UUID
 
 
 

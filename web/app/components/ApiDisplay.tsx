@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import CancelCard from "@/app/components/CancelCard";
 
 interface ApiDisplayProps {
   term: string
@@ -21,7 +22,7 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
       debounceRef.current = setTimeout(() => {
         setLoading(true)
         setError('')
-        fetch(`/api/list/lgbt/${encodeURIComponent(term)}`)
+        fetch(`/api/lgbt/list/${encodeURIComponent(term)}`)
           .then(response => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`)
@@ -67,30 +68,13 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
       {data.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mx-4">
           {data.map((doc, index) => (
-            <div key={doc.page_id || index} className={`border-2 rounded-lg shadow-md ${doc.canceled == true ? 'border-red-500' :  (doc.penance != null ? 'border-yellow-400' :'border-green-600')}`}>
-              <div className={`p-4 rounded-t-sm text-white ${doc.canceled == true ? 'bg-red-500' : (doc.penance != null ?  'bg-yellow-400': 'bg-green-600')}`}>
-                <h3 className="text-3xl font-bold">{doc.title || 'Unknown'}</h3>
-              </div>
-              <div className="bg-black text-white p-4 rounded-b-lg">
-                <div className="flex flex-col">
-                  <p className="text-2xl font-bold text-center">{doc.canceled == true ? 'Cancelled' :  (doc.penance != null ? 'Do Better...' : 'Slay Queen!')}</p>
-                  <br />
-                  <p className="mb-1 text-left">{doc.rationale || 'N/A'}</p>
-                  {doc.revokable && doc.penance && (
-                    <div>
-                      <hr className="my-2" />
-                      <p className="mb-1 text-left"><strong>Path to Redemption:</strong> {doc.penance}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <CancelCard key={index} title={doc.title} canceled={doc.canceled} rationale={doc.rationale} penance={doc.penance} />
           ))}
         </div>
       ) : (
         <div>
           <p className="text-xl">No results found</p>
-          <p className="mx-4">Enter the name of a celebrity to check their cancled status.</p>
+          <p className="mx-4">Enter the name of a celebrity to check their canceled status.</p>
         </div>
       )}
     </div>

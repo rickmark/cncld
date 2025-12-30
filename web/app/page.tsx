@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import ApiDisplay from './components/ApiDisplay'
+import RandomCancel from "@/app/components/RandomCancel";
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -15,11 +16,11 @@ export default function Home() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-transparent border-0 border-b-2 border-white placeholder-white text-3xl font-bold text-center w-48 focus:outline-none"
+            className="bg-transparent border-0 m-4 border-b-2 border-white placeholder-white text-3xl font-bold text-center w-48 focus:outline-none"
           />{' '}
           cncld?
         </h1>
-        <ApiDisplay term={searchTerm} />
+        { searchTerm ? <ApiDisplay term={searchTerm} /> : <RandomCancel /> }
       </div>
     </main>
   )
