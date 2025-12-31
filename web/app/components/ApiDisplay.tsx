@@ -23,7 +23,7 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
       debounceRef.current = setTimeout(() => {
         setLoading(true)
         setError('')
-        fetch(`$${getBaseUrl()}/api/lgbt/list/${encodeURIComponent(term)}`)
+        fetch(`${getBaseUrl()}/api/lgbt/list/${encodeURIComponent(term)}`)
           .then(response => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`)
