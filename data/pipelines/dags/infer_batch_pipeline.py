@@ -1,7 +1,8 @@
 from datetime import timedelta
 
-from airflow import DAG
-from airflow.sdk.definitions.decorators import task
+from airflow.sdk import task, DAG
+from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
+from airflow.providers.mysql.hooks.mysql import MySqlHook
 
 default_args = {
     'owner': 'rickmark',
@@ -79,12 +80,13 @@ Given the following context, determine whether the subject of the investigation 
 
 
 with DAG('infer_judgement') as dag:
-    @task()
-    def get_inference_targets() -> list[InferenceContext]:
+    @task
+    def get_inference_targets():
+        return []
 
-
-    @task()
+    @task
     def upload_result(inference_result: Result):
+        conn = MySqlHook(conn_id='mysql_default')
         data = {k: v for k, v in inference_result.__dict__.items() if not k.startswith('_')}
 
         stmt = insert(inference_result.__table__).values(data)
@@ -120,7 +122,7 @@ with DAG('infer_judgement') as dag:
         parsed_response = CancelInferenceResult.model_validate_json(response.message.content)
 
         return CancelResult(
-            context=input_context,
+            context=single_input,
             result=parsed_response,
             confidence=math.exp(response.logprobs[6].logprob)
         )
@@ -139,13 +141,30 @@ with DAG('infer_judgement') as dag:
         )
 
     @task
-    def infer_judgement(context: InferenceContext) -> Result:
-        result = process_result(context)
+    def infer_judgement(llm_context):
+        result = process_result(llm_context)
         upload_result(result)
         return result
 
+    sql_task = SQLExecuteQueryOperator(
+        task_id='query_targets',
+        # Reference the connection ID created in the Airflow UI
+        conn_id='mysql_airflow_conn',
+        # The SQL query to execute
+        sql=r"""
+            SELECT
+                col1,
+                col2
+            FROM
+                table_name
+            WHERE
+                col1 = 'some_value';
+            """,
+        # Optional: set autocommit to True if needed
+        autocommit=True
+    )
 
-    infer_judgement.expand(context=get_inference_targets())
+    infer_judgement.partial().expand(llm_context=get_inference_targets())
 
 
 if __name__ == "__main__":
