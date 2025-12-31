@@ -2,6 +2,7 @@ import os
 import uuid
 from dataclasses import dataclass
 from typing import Optional
+from pathlib import Path
 
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -12,7 +13,10 @@ from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 class Base(DeclarativeBase):
   pass
 
-app = Flask(__name__)
+custom_static_path = Path(os.path.join(os.path.dirname(__file__), "../out")).resolve()
+
+app = Flask(__name__, static_folder=custom_static_path, static_url_path='/')
+
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL',
                                                        "postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld")
 db = SQLAlchemy(app, model_class=Base)
@@ -62,6 +66,10 @@ def random_endpoint(dims):
 
     return jsonify({"result": {key: value for key, value in item.__dict__.items() if '_' not in key}})
 
+
+@app.route("/")
+def index():
+    return app.send_static_file("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

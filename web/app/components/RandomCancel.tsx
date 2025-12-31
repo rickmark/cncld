@@ -1,5 +1,6 @@
 import {useState} from "react";
 import CancelCard from "@/app/components/CancelCard";
+import { getBaseUrl } from "@/app/utils"
 
 interface CancelResult {
     title: string,
@@ -11,7 +12,7 @@ interface CancelResult {
 export default function RandomCancel() {
     const [data, setData] = useState<CancelResult | null>(null);
     if (!data) {
-        fetch(`/api/lgbt/random/cancel`)
+        fetch(`${getBaseUrl()}/api/lgbt/random/cancel`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`)

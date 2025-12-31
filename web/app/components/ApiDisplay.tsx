@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import CancelCard from "@/app/components/CancelCard";
+import { getBaseUrl } from "@/app/utils"
 
 interface ApiDisplayProps {
   term: string
@@ -22,7 +23,7 @@ export default function ApiDisplay({ term }: ApiDisplayProps) {
       debounceRef.current = setTimeout(() => {
         setLoading(true)
         setError('')
-        fetch(`/api/lgbt/list/${encodeURIComponent(term)}`)
+        fetch(`$${getBaseUrl()}/api/lgbt/list/${encodeURIComponent(term)}`)
           .then(response => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}, message: ${response.statusText}`)
