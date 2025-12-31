@@ -17,8 +17,10 @@ custom_static_path = Path(os.path.join(os.path.dirname(__file__), "../out")).res
 
 app = Flask(__name__, static_folder=custom_static_path, static_url_path='/')
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL',
-                                                       "postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld")
+DATABASE_URL =  os.environ.get('DATABASE_URL', "postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld").replace("postgres://", "postgresql://")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+
 db = SQLAlchemy(app, model_class=Base)
 
 
