@@ -4,3 +4,5 @@ export function getBaseUrl() {
   if (baseUrl) return `https://${baseUrl}`;
   return 'http://localhost:5000'; // Default to localhost
 }
+
+
