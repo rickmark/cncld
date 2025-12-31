@@ -15,13 +15,13 @@ class Base(DeclarativeBase):
 
 custom_static_path = Path(os.path.join(os.path.dirname(__file__), "../out")).resolve()
 
-app = Flask(__name__, static_folder=custom_static_path, static_url_path='/')
+application = Flask(__name__, static_folder=custom_static_path, static_url_path='/')
 
 DATABASE_URL =  os.environ.get('DATABASE_URL', "postgresql://cncld_web:ur_cncld@192.168.0.67:5432/cncld").replace("postgres://", "postgresql://")
 
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+application.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
-db = SQLAlchemy(app, model_class=Base)
+db = SQLAlchemy(application, model_class=Base)
 
 
 
@@ -42,26 +42,26 @@ class Item(Base):
     dimension: Mapped[str] = mapped_column(types.String)
 
 
-@app.route("/api/<string:dims>/list/<string:item>")
+@application.route("/api/<string:dims>/list/<string:item>")
 def list_endpoint(dims, item):
-    app.logger.info(f"Getting List for Search: {item}")
+    application.logger.info(f"Getting List for Search: {item}")
     stmt = db.select(Item).where(Item.title.ilike(f"{item}%"))
     items = list(db.session.execute(stmt).scalars())
 
     results = []
     for row in items:
-        app.logger.info(row)
+        application.logger.info(row)
         row_hash = {key: value for key, value in row.__dict__.items() if '_' not in key}
 
         results.append(row_hash)
-    app.logger.info(f"Found {len(results)} Items")
+    application.logger.info(f"Found {len(results)} Items")
 
     response = jsonify({"results": results})
-    app.logger.info(f"Response: {response.data}")
+    application.logger.info(f"Response: {response.data}")
     return response
 
 
-@app.route("/api/<string:dims>/random/cancel")
+@application.route("/api/<string:dims>/random/cancel")
 def random_endpoint(dims):
     stmt = db.select(Item).where(Item.canceled == True and Item.dimension == dims).order_by(func.random())
     item = db.session.execute(stmt).scalar()
@@ -69,9 +69,11 @@ def random_endpoint(dims):
     return jsonify({"result": {key: value for key, value in item.__dict__.items() if '_' not in key}})
 
 
-@app.route("/")
+@application.route("/")
 def index():
-    return app.send_static_file("index.html")
+    return application.send_static_file("index.html")
+
+__all__ = ["application"]
 
 if __name__ == "__main__":
     app.run()
