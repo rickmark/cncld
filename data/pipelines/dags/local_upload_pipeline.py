@@ -9,10 +9,14 @@ from airflow.models import DAG
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.amazon.aws.transfers.local_to_s3 import LocalFilesystemToS3Operator
 
+default_args = {
+    'owner': 'rickmark',
+}
 
 with DAG(
     dag_id="local_upload_pipeline",
     schedule="@daily",
+    default_args=default_args,
 ) as dag:
     @task.branch(task_id="check_s3_file")
     def check_s3_file(dest_key, task_key):

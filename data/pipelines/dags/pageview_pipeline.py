@@ -18,14 +18,16 @@ logging.basicConfig(level=logging.INFO)
 
 PAGEVIEWS_FILE = re.compile(r"pageviews/pageviews-(\d+)-user.bz2")
 
+default_args = {
+    'owner': 'rickmark',
+}
 
 
 with DAG(
-    dag_id="pageview_pipeline",
+    dag_id="pageview",
+    default_args=default_args,
     description="Upload pageview data to S3",
     schedule="@daily") as dag:
-
-
 
     @task
     def process_pageviews_file(filename):

@@ -79,7 +79,11 @@ Given the following context, determine whether the subject of the investigation 
 """
 
 
-with DAG('infer_judgement') as dag:
+with DAG(
+    dag_id='infer_judgement',
+    schedule='@daily',
+    default_args=default_args,
+) as dag:
     @task
     def get_inference_targets():
         return []

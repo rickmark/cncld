@@ -10,11 +10,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-with DAG('multistream_index_pipeline',
-         params=ParamsDict({
-             'file_name': 'enwiki-pages-articles-multistream-index.txt'
-         }),
-         schedule="@daily") as dag:
+default_args = {
+    'owner': 'rickmark',
+}
+
+with DAG(
+    dag_id='multistream_index',
+    params=ParamsDict({
+     'file_name': 'enwiki-pages-articles-multistream-index.txt'
+    }),
+    default_args=default_args,
+    schedule="@daily"
+    ) as dag:
 
 
     @task(do_xcom_push=True)
