@@ -1,0 +1,38 @@
+name: CancelCoin - CI
+
+permissions: {}
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  check:
+    name: Foundry project
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Run Forge fmt
+        run: forge fmt --check
+        working-directory: coin
+
+      - name: Run Forge build
+        run: forge build --sizes
+        working-directory: coin
+
+      - name: Run Forge tests
+        run: forge test -vvv
+        working-directory: coin
