@@ -20,6 +20,9 @@ wheels/
 .installed.cfg
 *.egg
 
+!coin/lib
+coin/out/
+
 # Virtual Environments
 venv/
 env/
