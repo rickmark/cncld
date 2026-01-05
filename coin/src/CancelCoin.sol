@@ -3,19 +3,32 @@ pragma solidity ^0.8.13;
 
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {ERC1155Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import {ERC1155BurnableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
-import {ERC1155PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155PausableUpgradeable.sol";
-import {ERC1155SupplyUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
+import {
+    ERC1155BurnableUpgradeable
+} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol";
+import {
+    ERC1155PausableUpgradeable
+} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155PausableUpgradeable.sol";
+import {
+    ERC1155SupplyUpgradeable
+} from "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155SupplyUpgradeable.sol";
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 import {MultiSignerERC7913} from "@openzeppelin/contracts/utils/cryptography/signers/MultiSignerERC7913.sol";
 
 contract CancelCoinSigner is MultiSignerERC7913 {
-    constructor(bytes[] memory signers_, uint64 threshold_) MultiSignerERC7913(signers_, threshold_) {
-    }
+    constructor(bytes[] memory signers_, uint64 threshold_) MultiSignerERC7913(signers_, threshold_) {}
 }
 
-contract CancelCoin is Initializable, ERC1155Upgradeable, AccessControlUpgradeable, ERC1155PausableUpgradeable, ERC1155BurnableUpgradeable, ERC1155SupplyUpgradeable, UUPSUpgradeable {
+contract CancelCoin is
+    Initializable,
+    ERC1155Upgradeable,
+    AccessControlUpgradeable,
+    ERC1155PausableUpgradeable,
+    ERC1155BurnableUpgradeable,
+    ERC1155SupplyUpgradeable,
+    UUPSUpgradeable
+{
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -23,14 +36,12 @@ contract CancelCoin is Initializable, ERC1155Upgradeable, AccessControlUpgradeab
 
     error AlreadyCanceledError(uint256 id, string tokenName, uint256 value);
 
-
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
-    function initialize(address defaultAdmin, address pauser, address minter, address upgrader) public initializer
-    {
+    function initialize(address defaultAdmin, address pauser, address minter, address upgrader) public initializer {
         __ERC1155_init("https://cncld.app/coin/{id}");
         __AccessControl_init();
         __ERC1155Pausable_init();
@@ -55,12 +66,13 @@ contract CancelCoin is Initializable, ERC1155Upgradeable, AccessControlUpgradeab
         _unpause();
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data) public onlyRole(MINTER_ROLE)
-    {
+    function mint(address account, uint256 id, uint256 amount, bytes memory data) public onlyRole(MINTER_ROLE) {
         _mint(account, id, amount, data);
     }
 
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public onlyRole(MINTER_ROLE)
+    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        public
+        onlyRole(MINTER_ROLE)
     {
         _mintBatch(to, ids, amounts, data);
     }
@@ -77,18 +89,23 @@ contract CancelCoin is Initializable, ERC1155Upgradeable, AccessControlUpgradeab
         mint(recipient, subjectHash, cancelFactor, cancelData);
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override onlyRole(UPGRADER_ROLE)
-    {
+    function _authorizeUpgrade(address newImplementation) internal override onlyRole(UPGRADER_ROLE) {
         // No body is required as the `onlyRole(UPGRADER_ROLE)` will revert if needed
     }
 
     // The following functions are overrides required by Solidity.
-    function _update(address from, address to, uint256[] memory ids, uint256[] memory values) internal override(ERC1155Upgradeable, ERC1155PausableUpgradeable, ERC1155SupplyUpgradeable)
+    function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
+        internal
+        override(ERC1155Upgradeable, ERC1155PausableUpgradeable, ERC1155SupplyUpgradeable)
     {
         super._update(from, to, ids, values);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(ERC1155Upgradeable, AccessControlUpgradeable) returns (bool)
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC1155Upgradeable, AccessControlUpgradeable)
+        returns (bool)
     {
         return super.supportsInterface(interfaceId);
     }

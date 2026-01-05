@@ -22,6 +22,10 @@ wheels/
 
 !coin/lib
 coin/out/
+!coin/broadcast
+coin/broadcast/*/31337/
+coin/broadcast/**/dry-run/
+coin/cache/
 
 # Virtual Environments
 venv/
